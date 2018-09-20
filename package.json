@@ -13,8 +13,8 @@
     "watch-build": "tsc -w",
     "watch-server": "nodemon -w serverless.yml --delay 2 -w dist/ -x 'serverless offline start --stage local'",
     "dev": "concurrently -k -p '[{name}]' -n 'TypeScript,Serverless' -c 'yellow.bold,cyan.bold,green.bold' 'npm run watch-build' 'npm run watch-server'",
-    "deploy-all": "serverless deploy --stage prod",
-    "deploy": "serverless deploy function -f graphql --stage prod",
+    "deploy-all": "tsc && serverless deploy --stage prod",
+    "deploy": "tsc && serverless deploy function -f graphql --stage prod",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
