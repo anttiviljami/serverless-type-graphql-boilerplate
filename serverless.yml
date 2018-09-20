@@ -10,7 +10,7 @@ provider:
     DB_TABLE: ${env:DB_TABLE}
     DB_USER: ${env:DB_USER}
     DB_PASS: ${env:DB_PASS}
-    DATABASE_URL: ${env:DATABASE_URL, self:resources.Outputs.Database}
+    DATABASE_URL: ${self:custom.database.${self:provider.stage}, env:DATABASE_URL}
 #  apiKeys:
 #    - x-api-key
 
@@ -33,7 +33,7 @@ resources:
         Engine: postgres
         DBInstanceClass: db.t2.micro
         AllocatedStorage: 5
-        DBInstanceIdentifier: ${self:provider.environment.DB_NAME}-${self:provider.stage}
+        DBInstanceIdentifier: ${self:service}-${self:provider.stage}
         DBName: ${self:provider.environment.DB_NAME}
         MasterUsername: ${self:provider.environment.DB_USER}
         MasterUserPassword: ${self:provider.environment.DB_PASS}
@@ -75,6 +75,8 @@ plugins:
   - serverless-offline
 
 custom:
+  database:
+    prod: ${self:resources.Outputs.Database}
   serverless-offline:
     port: 9000
-    apiKey: secret
+    stage: local
