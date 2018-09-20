@@ -1,0 +1,13 @@
+# env
+.env
+.env.*
+!.env.sample
+!.env.test.sample
+
+# build
+dist/
+.serverless
+
+# npm
+node_modules
+npm-debug.log*
