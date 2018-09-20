@@ -2,6 +2,13 @@
 
 Simple serverless API boilerplate project for TypeORM + GraphQL (TypeGraphQL) and using PostgreSQL on RDS
 
+## Development
+
+```
+npm install
+npm run dev # serverless-offline running graphql explorer in localhost:9000/graphql
+```
+
 ## Deployment
 
 ```
