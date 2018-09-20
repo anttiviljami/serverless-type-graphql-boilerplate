@@ -4,13 +4,14 @@ provider:
   name: aws
   runtime: nodejs8.10
   region: eu-west-1
-  stage: prod
+  stage: ${opt:stage, 'dev'}
   environment:
     DB_NAME: ${env:DB_NAME}
     DB_TABLE: ${env:DB_TABLE}
     DB_USER: ${env:DB_USER}
     DB_PASS: ${env:DB_PASS}
-    DATABASE_URL: ${self:custom.database.${self:provider.stage}, env:DATABASE_URL}
+    DATABASE_URL: ${self:custom.database.${self:provider.stage}}
+
 #  apiKeys:
 #    - x-api-key
 
@@ -42,17 +43,6 @@ resources:
           - Fn::GetAtt:
             - ServerlessRDSSecurityGroup
             - GroupId
-  Outputs:
-    Database:
-      Description: "Database URL"
-      Value:
-        "Fn::Join": ["", [
-        "postgres://${env:DB_USER}:${env:DB_PASS}@",
-        "Fn::GetAtt": [Database, Endpoint.Address],
-        ":",
-        "Fn::GetAtt": [Database, Endpoint.Port],
-        "/${env:DB_NAME}"
-      ]]
 
 functions:
   graphql:
@@ -61,10 +51,12 @@ functions:
       - http:
           path: graphql
           method: get
+          timeout: 30
       - http:
           path: graphql
           method: post
           cors: true
+          timeout: 30
 
 package:
   include:
@@ -75,8 +67,15 @@ plugins:
   - serverless-offline
 
 custom:
-  database:
-    prod: ${self:resources.Outputs.Database}
   serverless-offline:
     port: 9000
-    stage: local
+  database:
+    local: "${env:DATABASE_URL}"
+    prod:
+      "Fn::Join": ["", [
+      "postgres://${env:DB_USER}:${env:DB_PASS}@",
+      "Fn::GetAtt": [Database, Endpoint.Address],
+      ":",
+      "Fn::GetAtt": [Database, Endpoint.Port],
+      "/${env:DB_NAME}"
+    ]]
